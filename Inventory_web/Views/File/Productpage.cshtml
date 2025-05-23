@@ -1,0 +1,188 @@
+﻿@model IEnumerable<Inventoryweb.Models.Products>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    var categoryList = Model.Select(p => p.Category).Distinct().ToList();
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 style="text-align:center"><b>Products Lists</b></h2>
+
+        <a asp-controller="File" asp-action="Addproduct" class="btn btn-success">Add Product</a>
+        <a asp-controller="File" asp-action="Lowstock" class="btn btn-warning"> Low stocks Items</a><br><br>
+   
+
+
+        
+
+        <!-- Edit by ID -->
+        <div class="input-group mb-3" style="max-width:300px;">
+            <input type="number" id="EditIdInput" class="form-control" placeholder=" Enter ID" required />
+            <button type="button" class="btn btn-success" onclick="redirectToEdit()">Edit</button>
+        </div>
+        <!-- Delete & Details scripts -->
+        <div class="input-group mb-3" style="max-width:300px;">
+            <input type="number" id="deleteIdInput" class="form-control" placeholder="Enter ID" required />
+            <button type="button" class="btn btn-danger" onclick="redirectToDelete()">Delete </button>
+        </div>
+
+        <div class="input-group mb-3" style="max-width:300px;">
+            <input type="number" id="productIdInput" class="form-control" placeholder="Enter ID" required />
+            <button type="button" class="btn btn-primary" onclick="redirectToDetails()">Search </button>
+        </div>
+
+        <!-- Filter Form -->
+        <form method="get" asp-action="Displaydata" asp-controller="File" class="mt-4 row g-3">
+            <div class="col-md-4">
+                <input type="text" name="name" class="form-control" placeholder="Search by Name" />
+            </div>
+            <div class="col-md-2">
+                <input type="number" step="0.01" name="price" class="form-control" placeholder="Price (optional)" />
+            </div>
+            <div class="col-md-3">
+                <select name="category" class="form-select">
+                    <option value="">-- All Categories --</option>
+                    @foreach (var category in categoryList)
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+        <br><br>
+        <!-- Table -->
+        @if (Model != null && Model.Any())
+        {
+            <table class="table table-hover table-striped align-middle shadow-sm rounded">
+                <thead class="text-center bg-success text-white">
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>CreatedDate</th>
+                        <th>IsDiscontinued</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>@product.Id</td>
+                            <td>@product.Name</td>
+                            <td>@product.Description</td>
+                            <td>@product.Category</td>
+                            <td>@product.Price</td>
+                            <td>@product.Stock
+                      
+                        @if (product.Stock < 5)
+                                {
+                                    <span class="badge bg-danger ms-3">Low Stock</span>
+                                }
+                            </td>
+                            <td>@product.CreatedDate</td>
+                            <td>@product.IsDiscontinued
+                                @if (product.IsDiscontinued)
+                                {
+                                    <span class="badge bg-warning text-dark">REMOVED</span>
+                                }
+                            
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="redirectToEdit(@product.Id)">Edit</button>
+
+                                <button class="btn btn-danger btn-sm" onclick="setDeleteId(@product.Id)">Delete</button>
+
+                               
+                               
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No data available.</p>
+        }
+
+    
+
+    </div>
+
+    <script>
+        function redirectToEdit(id = null) {
+            var editId = id || document.getElementById('EditIdInput').value;
+            if (editId) {
+                window.location.href = '/product/edit/' + editId;
+            }
+        }
+            function setstock(id = null) {
+            var setsto = id || document.getElementById('').value;
+            if (setsto) {
+                window.location.href = '/product/stock/' + editId;
+            }
+        }
+         
+        function redirectToDetails() {
+            var id = document.getElementById('productIdInput').value;
+            if (id) {
+                window.location.href = '/product/details/' + id;
+            }
+        }
+
+        function redirectToDelete() {
+            var id = document.getElementById('deleteIdInput').value;
+            if (id) {
+                window.location.href = '/product/delete/' + id;
+            }
+        }
+
+            function setDeleteId(id) {
+            window.location.href = '/product/delete/' + id;
+        }
+               function addToOrder(productId) {
+            fetch(`/order/markordered/${productId}`)
+                .then(response => response.text())
+                .then(result => {
+                    document.getElementById('status-' + productId).innerText = 'Ordered';
+                })
+                .catch(error => {
+                    alert('Order failed.');
+                    console.error(error);
+                });
+                   function markAsOrdered(productId) {
+                const quantity = document.getElementById("quantity-" + productId).value;
+
+                if (quantity && !isNaN(quantity)) {
+                    fetch(`/order/markordered/${productId}/${quantity}`)
+                        .then(response => response.text())
+                        .then(result => {
+                            alert("Order marked: " + result);
+                        })
+                        .catch(error => {
+                            alert("Error: " + error);
+                        });
+                } else {
+                    alert("Please enter a valid quantity.");
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+﻿@model Inventoryweb.Models.Products
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<html>
+<head>
+    <title>Edit Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="card shadow-lg rounded-4 border-0">
+        <div class="card-body p-5">
+            <h2 class="text-center mb-4 text-primary">✏️ Edit Product</h2>
+
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-success text-center">@ViewBag.Message</div>
+            }
+
+            <form asp-action="EditProductView" asp-controller="File" method="post" class="needs-validation" novalidate>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-4">
+                    <label asp-for="Name" class="form-label fw-semibold">Product Name</label>
+                    <input asp-for="Name" class="form-control rounded-3 shadow-sm" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label fw-semibold">Description</label>
+                    <textarea asp-for="Description" class="form-control rounded-3 shadow-sm" rows="3"></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Category" class="form-label fw-semibold">Category</label>
+                    <input asp-for="Category" class="form-control rounded-3 shadow-sm" />
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Price" class="form-label fw-semibold">Price (₹)</label>
+                    <input asp-for="Price" class="form-control rounded-3 shadow-sm" type="number" step="0.01" />
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Stock" class="form-label fw-semibold">Stock</label>
+                    <input asp-for="Stock" class="form-control rounded-3 shadow-sm" type="number" />
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="CreatedDate" class="form-label fw-semibold">Created Date</label>
+                    <input asp-for="CreatedDate" class="form-control rounded-3 shadow-sm" type="datetime-local" />
+                </div>
+
+                <div class="form-check form-switch mb-4">
+                    <input asp-for="IsDiscontinued" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsDiscontinued" class="form-check-label fw-semibold">Is Discontinued?</label>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success btn-lg rounded-pill">💾 Update Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Gather form data
+                const formData = new FormData(form);
+
+                // Convert FormData to URL-encoded string
+                const data = new URLSearchParams();
+                for (const pair of formData) {
+                    data.append(pair[0], pair[1]);
+                }
+
+                // Send POST request
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'text/html',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: data
+                });
+
+                // Handle response (replace form with response HTML)
+                if (response.ok) {
+                    const html = await response.text();
+                    document.body.innerHTML = html;
+                } else {
+                    alert('Failed to update product.');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

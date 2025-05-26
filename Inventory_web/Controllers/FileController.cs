@@ -82,7 +82,7 @@ namespace Inventoryweb.Controllers
                 return View("DeleteResult");
             }
 
-            // Instead of removing the product, mark as discontinued
+           
             product.IsDiscontinued = true;
             _context.Products.Update(product); // optional, EF can track automatically
             await _context.SaveChangesAsync();
@@ -118,7 +118,7 @@ namespace Inventoryweb.Controllers
                 return NotFound();
             }
 
-            // Update properties
+          
             existingProduct.Name = model.Name;
             existingProduct.Description = model.Description;
             existingProduct.Category = model.Category;
@@ -154,7 +154,7 @@ namespace Inventoryweb.Controllers
             }
 
             var result = products.ToList();
-            return View(result); // Make sure there is a Displaydata.cshtml view
+            return View(result); 
         }
 
 

@@ -63,14 +63,36 @@
         </div>
     </div>
 </div>
-    <script>
+     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.querySelector('form');
+
             form.addEventListener('submit', async function (e) {
                 e.preventDefault();
 
                 // Gather form data
                 const formData = new FormData(form);
+
+                const name = formData.get('Name');
+                const category = formData.get('Category');
+
+                // Validate: name and category should not be only numbers
+                const isNumberOnly = str => /^\d+$/.test(str);
+
+                if (!name || !category) {
+                    alert('Name and Category are required.');
+                    return;
+                }
+
+                if (isNumberOnly(name)) {
+                    alert('Name should not be only numbers.');
+                    return;
+                }
+
+                if (isNumberOnly(category)) {
+                    alert('Category should not be only numbers.');
+                    return;
+                }
 
                 // Convert FormData to URL-encoded string
                 const data = new URLSearchParams();
@@ -88,7 +110,7 @@
                     body: data
                 });
 
-                // Handle response (replace form with response HTML)
+                // Handle response
                 if (response.ok) {
                     const html = await response.text();
                     document.body.innerHTML = html;

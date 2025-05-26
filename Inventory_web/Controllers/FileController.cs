@@ -84,7 +84,7 @@ namespace Inventoryweb.Controllers
 
            
             product.IsDiscontinued = true;
-            _context.Products.Update(product); // optional, EF can track automatically
+            _context.Products.Update(product); 
             await _context.SaveChangesAsync();
 
             ViewBag.Message = $"Product with ID {id} marked as discontinued.";

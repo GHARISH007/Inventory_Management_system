@@ -69,54 +69,65 @@
         function isNotOnlyNumbers(input) {
             return !/^\d+$/.test(input.trim());
         }
+  function isNotOnlyNumbers(value) {
+    return /\D/.test(value); // Returns true if there's at least one non-digit character
+}
+         document.getElementById("productForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-        document.getElementById("productForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
+      // Clear previous error messages
+      document.querySelectorAll(".text-danger").forEach(el => el.innerText = "");
 
-            // Clear previous error messages
-            document.querySelectorAll(".text-danger").forEach(el => el.innerText = "");
+      let isValid = true;
 
-            let isValid = true;
+      const name = document.getElementById("name").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const category = document.getElementById("category").value.trim();
 
-            const name = document.getElementById("name").value;
-            const description = document.getElementById("description").value;
-            const category = document.getElementById("category").value;
+      if (!name) {
+          document.getElementById("nameError").innerText = "Product Name is required.";
+          isValid = false;
+      } else if (!isNotOnlyNumbers(name)) {
+          document.getElementById("nameError").innerText = "Product Name should not be only numbers.";
+          isValid = false;
+      }
 
-            if (!isNotOnlyNumbers(name)) {
-                document.getElementById("nameError").innerText = "Product Name should not be a number.";
-                isValid = false;
-            }
+      if (!description) {
+          document.getElementById("descriptionError").innerText = "Description is required.";
+          isValid = false;
+      } else if (!isNotOnlyNumbers(description)) {
+          document.getElementById("descriptionError").innerText = "Description should not be only numbers.";
+          isValid = false;
+      }
 
-            if (!isNotOnlyNumbers(description)) {
-                document.getElementById("descriptionError").innerText = "Description should not be a number.";
-                isValid = false;
-            }
+      if (!category) {
+          document.getElementById("categoryError").innerText = "Category is required.";
+          isValid = false;
+      } else if (!isNotOnlyNumbers(category)) {
+          document.getElementById("categoryError").innerText = "Category should not be only numbers.";
+          isValid = false;
+      }
 
-            if (!isNotOnlyNumbers(category)) {
-                document.getElementById("categoryError").innerText = "Category should not be a number.";
-                isValid = false;
-            }
+      if (!isValid) return;
 
-            if (!isValid) return;
+      const formData = new FormData(this);
 
-            const formData = new FormData(this);
+      try {
+          const response = await fetch("/api/pro", {
+              method: "POST",
+              body: formData
+          });
 
-            try {
-                const response = await fetch("/api/pro", {
-                    method: "POST",
-                    body: formData
-                });
+          const result = await response.text();
+          document.getElementById("responseMessage").innerHTML =
+              `<div class="alert alert-success">${result}</div>`;
+      } catch (error) {
+          document.getElementById("responseMessage").innerHTML =
+              `<div class="alert alert-danger">Error: ${error.message}</div>`;
+      }
+  });
 
-                const result = await response.text();
-                document.getElementById("responseMessage").innerHTML =
-                    `<div class="alert alert-success">${result}</div>`;
-            } catch (error) {
-                document.getElementById("responseMessage").innerHTML =
-                    `<div class="alert alert-danger">Error: ${error.message}</div>`;
-            }
-        });
-    </script>
-
+      </script>
 
 
      

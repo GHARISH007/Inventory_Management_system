@@ -1,125 +1,161 @@
 @model Inventoryweb.Models.Products
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Product</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <title>Add Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-  <div class="container mt-5">
-    <div class="card shadow-lg rounded-4 border-0">
-        <div class="card-body p-5">
-            <h2 class="text-center mb-4 text-primary">✏️ Edit Product</h2>
+<body class="container mt-5">
+    <h2 style="text-align:center"><b>Add Product</b></h2>
+    <div class="container mt-5">
+        <div class="card shadow-lg rounded-4 border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Add New Product</h4>
+            </div>
+            <div class="card-body">
+                <form id="productForm" action="/api/pro" method="post">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="name" name="Name" placeholder="Enter product name">
+                        <div id="nameError" class="text-danger small mt-1"></div>
+                    </div>
 
-            @if (ViewBag.Message != null)
-            {
-                <div class="alert alert-success text-center">@ViewBag.Message</div>
-            }
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="Description" rows="3" placeholder="Enter description"></textarea>
+                        <div id="descriptionError" class="text-danger small mt-1"></div>
+                    </div>
 
-            <form asp-action="EditProductView" asp-controller="File" method="post" class="needs-validation" novalidate>
-                <input type="hidden" asp-for="Id" />
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category *</label>
+                        <input type="text" class="form-control" id="category" name="Category" placeholder="Enter category">
+                        <div id="categoryError" class="text-danger small mt-1"></div>
+                    </div>
 
-                <div class="mb-4">
-                    <label asp-for="Name" class="form-label fw-semibold">Product Name</label>
-                    <input asp-for="Name" class="form-control rounded-3 shadow-sm" />
-                    <span asp-validation-for="Name" class="text-danger small"></span>
-                </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="price" name="Price" placeholder="0.00">
+                            <div id="priceError" class="text-danger small mt-1"></div>
+                        </div>
 
-                <div class="mb-4">
-                    <label asp-for="Description" class="form-label fw-semibold">Description</label>
-                    <textarea asp-for="Description" class="form-control rounded-3 shadow-sm" rows="3"></textarea>
-                </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="stock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="stock" name="Stock" placeholder="0">
+                            <div id="stockError" class="text-danger small mt-1"></div>
+                        </div>
+                    </div>
 
-                <div class="mb-4">
-                    <label asp-for="Category" class="form-label fw-semibold">Category</label>
-                    <input asp-for="Category" class="form-control rounded-3 shadow-sm" />
-                </div>
+                    <div class="mb-3">
+                        <label for="createdDate" class="form-label">Created Date</label>
+                        <input type="datetime-local" class="form-control" id="createdDate" name="CreatedDate">
+                        
+                    </div>
 
-                <div class="mb-4">
-                    <label asp-for="Price" class="form-label fw-semibold">Price (₹)</label>
-                    <input asp-for="Price" class="form-control rounded-3 shadow-sm" type="number" step="0.01" />
-                </div>
+                    <div class="form-check mb-3">
+                        <input type="hidden" name="IsDiscontinued" value="false" />
+                        <input class="form-check-input" type="checkbox" id="isDiscontinued" name="IsDiscontinued" value="true">
+                        <label class="form-check-label" for="isDiscontinued">Is Discontinued?</label>
+                    </div>
 
-                <div class="mb-4">
-                    <label asp-for="Stock" class="form-label fw-semibold">Stock</label>
-                    <input asp-for="Stock" class="form-control rounded-3 shadow-sm" type="number" />
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="CreatedDate" class="form-label fw-semibold">Created Date</label>
-                    <input asp-for="CreatedDate" class="form-control rounded-3 shadow-sm" type="datetime-local" />
-                </div>
-
-                <div class="form-check form-switch mb-4">
-                    <input asp-for="IsDiscontinued" class="form-check-input" type="checkbox" />
-                    <label asp-for="IsDiscontinued" class="form-check-label fw-semibold">Is Discontinued?</label>
-                </div>
-
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-success btn-lg rounded-pill">💾 Update Product</button>
-                </div>
-            </form>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">Add Product</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form');
 
-            form.addEventListener('submit', async function (e) {
-                e.preventDefault();
+    <div id="responseMessage" class="mt-3"></div>
 
-                // Gather form data
-                const formData = new FormData(form);
+    <script>
+        function isNotOnlyNumbers(input) {
+            return !/^\d+$/.test(input.trim());
+        }
+  function isNotOnlyNumbers(value) {
+    return /\D/.test(value); // Returns true if there's at least one non-digit character
+}
+          document.getElementById("productForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
 
-                const name = formData.get('Name');
-                const category = formData.get('Category');
+            // Clear previous error messages
+            document.querySelectorAll(".text-danger").forEach(el => el.innerText = "");
 
-                // Validate: name and category should not be only numbers
-                const isNumberOnly = str => /^\d+$/.test(str);
+            let isValid = true;
 
-                if (!name || !category) {
-                    alert('Name and Category are required.');
-                    return;
-                }
+            const name = document.getElementById("name").value.trim();
+            const description = document.getElementById("description").value.trim();
+            const category = document.getElementById("category").value.trim();
+            const price = document.getElementById("price").value.trim();
+            const stock = document.getElementById("stock").value.trim();
 
-                if (isNumberOnly(name)) {
-                    alert('Name should not be only numbers.');
-                    return;
-                }
+            if (!name) {
+                document.getElementById("nameError").innerText = "Product Name is required.";
+                isValid = false;
+            } else if (!isNotOnlyNumbers(name)) {
+                document.getElementById("nameError").innerText = "Product Name should not be only numbers.";
+                isValid = false;
+            }
 
-                if (isNumberOnly(category)) {
-                    alert('Category should not be only numbers.');
-                    return;
-                }
+            if (!description) {
+                document.getElementById("descriptionError").innerText = "Description is required.";
+                isValid = false;
+            } else if (!isNotOnlyNumbers(description)) {
+                document.getElementById("descriptionError").innerText = "Description should not be only numbers.";
+                isValid = false;
+            }
 
-                // Convert FormData to URL-encoded string
-                const data = new URLSearchParams();
-                for (const pair of formData) {
-                    data.append(pair[0], pair[1]);
-                }
+            if (!category) {
+                document.getElementById("categoryError").innerText = "Category is required.";
+                isValid = false;
+            } else if (!isNotOnlyNumbers(category)) {
+                document.getElementById("categoryError").innerText = "Category should not be only numbers.";
+                isValid = false;
+            }
 
-                // Send POST request
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'text/html',
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: data
+            // Price validation
+            if (!price) {
+                document.getElementById("priceError").innerText = "Price is required.";
+                isValid = false;
+            } else if (isNaN(price) || Number(price) <= 0) {
+                document.getElementById("priceError").innerText = "Price must be a positive number.";
+                isValid = false;
+            }
+
+            // Stock validation
+            if (!stock) {
+                document.getElementById("stockError").innerText = "Stock is required.";
+                isValid = false;
+            } else if (isNaN(stock) || Number(stock) < 0) {
+                document.getElementById("stockError").innerText = "Stock must be zero or a positive number.";
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch("/api/pro", {
+                    method: "POST",
+                    body: formData
                 });
 
-                // Handle response
-                if (response.ok) {
-                    const html = await response.text();
-                    document.body.innerHTML = html;
-                } else {
-                    alert('Failed to update product.');
-                }
-            });
+                const result = await response.text();
+                document.getElementById("responseMessage").innerHTML =
+                    `<div class="alert alert-success">${result}</div>`;
+            } catch (error) {
+                document.getElementById("responseMessage").innerHTML =
+                    `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
         });
+
     </script>
+
+   
+
+
+
 
 </body>
 </html>

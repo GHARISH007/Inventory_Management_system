@@ -1,4 +1,4 @@
-﻿@model Inventoryweb.Models.Products
+@model Inventoryweb.Models.Products
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,19 +34,22 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="price" class="form-label">Price *</label>
+                            <label for="price" class="form-label">Price</label>
                             <input type="number" class="form-control" id="price" name="Price" placeholder="0.00">
+                            <div id="priceError" class="text-danger small mt-1"></div>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="stock" class="form-label">Stock *</label>
+                            <label for="stock" class="form-label">Stock</label>
                             <input type="number" class="form-control" id="stock" name="Stock" placeholder="0">
+                            <div id="stockError" class="text-danger small mt-1"></div>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="createdDate" class="form-label">Created Date</label>
                         <input type="datetime-local" class="form-control" id="createdDate" name="CreatedDate">
+                        
                     </div>
 
                     <div class="form-check mb-3">
@@ -72,65 +75,83 @@
   function isNotOnlyNumbers(value) {
     return /\D/.test(value); // Returns true if there's at least one non-digit character
 }
-         document.getElementById("productForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
+          document.getElementById("productForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
 
-      // Clear previous error messages
-      document.querySelectorAll(".text-danger").forEach(el => el.innerText = "");
+            // Clear previous error messages
+            document.querySelectorAll(".text-danger").forEach(el => el.innerText = "");
 
-      let isValid = true;
+            let isValid = true;
 
-      const name = document.getElementById("name").value.trim();
-      const description = document.getElementById("description").value.trim();
-      const category = document.getElementById("category").value.trim();
+            const name = document.getElementById("name").value.trim();
+            const description = document.getElementById("description").value.trim();
+            const category = document.getElementById("category").value.trim();
+            const price = document.getElementById("price").value.trim();
+            const stock = document.getElementById("stock").value.trim();
 
-      if (!name) {
-          document.getElementById("nameError").innerText = "Product Name is required.";
-          isValid = false;
-      } else if (!isNotOnlyNumbers(name)) {
-          document.getElementById("nameError").innerText = "Product Name should not be only numbers.";
-          isValid = false;
-      }
+            if (!name) {
+                document.getElementById("nameError").innerText = "Product Name is required.";
+                isValid = false;
+            } else if (!isNotOnlyNumbers(name)) {
+                document.getElementById("nameError").innerText = "Product Name should not be only numbers.";
+                isValid = false;
+            }
 
-      if (!description) {
-          document.getElementById("descriptionError").innerText = "Description is required.";
-          isValid = false;
-      } else if (!isNotOnlyNumbers(description)) {
-          document.getElementById("descriptionError").innerText = "Description should not be only numbers.";
-          isValid = false;
-      }
+            if (!description) {
+                document.getElementById("descriptionError").innerText = "Description is required.";
+                isValid = false;
+            } else if (!isNotOnlyNumbers(description)) {
+                document.getElementById("descriptionError").innerText = "Description should not be only numbers.";
+                isValid = false;
+            }
 
-      if (!category) {
-          document.getElementById("categoryError").innerText = "Category is required.";
-          isValid = false;
-      } else if (!isNotOnlyNumbers(category)) {
-          document.getElementById("categoryError").innerText = "Category should not be only numbers.";
-          isValid = false;
-      }
+            if (!category) {
+                document.getElementById("categoryError").innerText = "Category is required.";
+                isValid = false;
+            } else if (!isNotOnlyNumbers(category)) {
+                document.getElementById("categoryError").innerText = "Category should not be only numbers.";
+                isValid = false;
+            }
 
-      if (!isValid) return;
+            // Price validation
+            if (!price) {
+                document.getElementById("priceError").innerText = "Price is required.";
+                isValid = false;
+            } else if (isNaN(price) || Number(price) <= 0) {
+                document.getElementById("priceError").innerText = "Price must be a positive number.";
+                isValid = false;
+            }
 
-      const formData = new FormData(this);
+            // Stock validation
+            if (!stock) {
+                document.getElementById("stockError").innerText = "Stock is required.";
+                isValid = false;
+            } else if (isNaN(stock) || Number(stock) < 0) {
+                document.getElementById("stockError").innerText = "Stock must be zero or a positive number.";
+                isValid = false;
+            }
 
-      try {
-          const response = await fetch("/api/pro", {
-              method: "POST",
-              body: formData
-          });
+            if (!isValid) return;
 
-          const result = await response.text();
-          document.getElementById("responseMessage").innerHTML =
-              `<div class="alert alert-success">${result}</div>`;
-      } catch (error) {
-          document.getElementById("responseMessage").innerHTML =
-              `<div class="alert alert-danger">Error: ${error.message}</div>`;
-      }
-  });
+            const formData = new FormData(this);
 
-      </script>
+            try {
+                const response = await fetch("/api/pro", {
+                    method: "POST",
+                    body: formData
+                });
 
+                const result = await response.text();
+                document.getElementById("responseMessage").innerHTML =
+                    `<div class="alert alert-success">${result}</div>`;
+            } catch (error) {
+                document.getElementById("responseMessage").innerHTML =
+                    `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        });
 
-     
+    </script>
+
    
 
 

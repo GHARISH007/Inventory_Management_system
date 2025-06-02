@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Inventoryweb.Models.Products>
+@model IEnumerable<Inventoryweb.Models.Products>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 
@@ -84,6 +84,7 @@
                         <th>Stock</th>
                         <th>CreatedDate</th>
                         <th>IsDiscontinued</th>
+                         <th>Image</th>
                        
                     </tr>
                 </thead>
@@ -114,7 +115,15 @@
                                 {
                                     <span class="badge bg-warning text-dark">REMOVED</span>
                                 }</td>
-                          
+                             <td>
+                                @if (!string.IsNullOrEmpty(product.ImagePath))
+                                {
+                                    <img src="@product.ImagePath" alt="Product Image" class="img-thumbnail" style="max-height: 100px;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No image</span>
+                                }<td>
                         </tr>
                     }
                 </tbody>

@@ -46,7 +46,7 @@
 
         @if (Model != null && Model.Any())
         {
-            <table class="table table-hover table-striped align-middle shadow-sm rounded">
+           <table class="table table-hover table-striped align-middle shadow-sm rounded" style="width: 1500px;">
                 <thead class="text-center bg-success text-white">
                     <tr>
                         <th>Id</th>
@@ -57,6 +57,7 @@
                         <th>Stock</th>
                         <th>CreatedDate</th>
                         <th>IsDiscontinued</th>
+                        <th>Image</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -85,6 +86,18 @@
                                 }
                             </td>
                             <td>
+                              
+                                @if (!string.IsNullOrEmpty(product.ImagePath))
+                                {
+                                    <img src="@product.ImagePath" alt="Product Image" class="img-thumbnail" style="max-height: 100px;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No image</span>
+                                }
+                            </td>
+                            
+                            <td>
                                 <button class="btn btn-primary btn-sm" onclick="redirectToEdit(@product.Id)">Edit</button>
                                 <button class="btn btn-danger btn-sm" onclick="setDeleteId(@product.Id)">Delete</button>
                                 <button class="btn btn-success btn-sm"
@@ -96,21 +109,32 @@
                                         '@product.Price',
                                         '@product.Stock',
                                         '@product.CreatedDate',
-                                        '@product.IsDiscontinued')">
+                                        '@product.IsDiscontinued',
+                                        '@product.ImagePath')">
                                     View
                                 </button>
                             </td>
                         </tr>
+                      
+                       
                     }
+            
                 </tbody>
+           
             </table>
+                
+           
         }
         else
         {
             <p>No data available.</p>
         }
     </div>
-
+    <style>
+        .table-wide {
+            width: 1500px;
+        }
+    </style>
     <script>
         function redirectToEdit(id = null) {
             var editId = id || document.getElementById('EditIdInput').value;
@@ -137,7 +161,7 @@
             window.location.href = '/product/delete/' + id;
         }
 
-        function viewProduct(id, name, description, category, price, stock, createdDate, isDiscontinued) {
+        function viewProduct(id, name, description, category, price, stock, createdDate, isDiscontinued, imagePath) {
             document.getElementById('modalProductId').innerText = id;
             document.getElementById('modalProductName').innerText = name;
             document.getElementById('modalProductDescription').innerText = description;
@@ -146,10 +170,23 @@
             document.getElementById('modalProductStock').innerText = stock;
             document.getElementById('modalProductCreatedDate').innerText = createdDate;
             document.getElementById('modalProductIsDiscontinued').innerText = isDiscontinued === 'True' ? 'Yes' : 'No';
+            document.getElementById('modalProductImagePath').src = imagePath;
+              
 
             var myModal = new bootstrap.Modal(document.getElementById('productDetailsModal'));
             myModal.show();
         }
+                    document.querySelector('form').addEventListener('submit', function(e) {
+            var nameInput = this.querySelector('input[name="name"]');
+            if (nameInput) {
+                nameInput.value = nameInput.value.trim();
+                // Prevent submit if only blank spaces
+                if (nameInput.value === "") {
+                    nameInput.value = ""; // Optionally clear the field
+                }
+            }
+        });
+
     </script>
 
     <!-- Product Details Modal -->
@@ -185,10 +222,23 @@
 
                         <dt class="col-sm-3">Is Discontinued</dt>
                         <dd class="col-sm-9" id="modalProductIsDiscontinued"></dd>
+                        <dt class="col-sm-3">Image</dt>
+                        <dd class="col-sm-9">
+                            <img id="modalProductImagePath" src="" class="modal-product-image" />
+                        </dd>
                     </dl>
                 </div>
             </div>
         </div>
     </div>
+    <style>
+        .modal-product-image {
+            max-width: 100%;
+            max-height: 300px;
+            display: block;
+            margin: 0 auto;
+            object-fit: contain;
+        }
+    </style>
 </body>
 </html>

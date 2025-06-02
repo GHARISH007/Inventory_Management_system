@@ -15,6 +15,10 @@ namespace Inventoryweb.Models
         public int Stock { get; set; }
         public DateTime? CreatedDate { get; set; } 
         public bool IsDiscontinued { get; set; }
+          public string? ImagePath { get; set; }
+  [NotMapped]
+  public IFormFile? ImageFile { get; set; }
+
     }
 
 

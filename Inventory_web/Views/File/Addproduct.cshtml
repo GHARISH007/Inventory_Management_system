@@ -5,19 +5,26 @@
     <title>Add Product</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body class="container mt-5">
+   
+    
+
     <h2 style="text-align:center"><b>Add Product</b></h2>
     <div class="container mt-5">
+       
         <div class="card shadow-lg rounded-4 border-0">
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0">Add New Product</h4>
             </div>
             <div class="card-body">
-                <form id="productForm" action="/api/pro" method="post">
+                <form id="productForm" action="/api/add_product" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="name" class="form-label">Product Name</label>
                         <input type="text" class="form-control" id="name" name="Name" placeholder="Enter product name">
                         <div id="nameError" class="text-danger small mt-1"></div>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+
                     </div>
 
                     <div class="mb-3">
@@ -49,7 +56,7 @@
                     <div class="mb-3">
                         <label for="createdDate" class="form-label">Created Date</label>
                         <input type="datetime-local" class="form-control" id="createdDate" name="CreatedDate">
-                        
+
                     </div>
 
                     <div class="form-check mb-3">
@@ -58,8 +65,16 @@
                         <label class="form-check-label" for="isDiscontinued">Is Discontinued?</label>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Product Image</label>
+                        <input type="file" class="form-control" id="image" name="ImageFile" accept="image/*">
+                       
+                    </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-success btn-lg">Add Product</button>
+                    </div>
+                    <div class="d-grid mt-3">
+                        <button type="button" class="btn btn-primary " onclick="window.location.href='/File/Productpage'">🔙 Back to Product Page</button>
                     </div>
                 </form>
             </div>
@@ -69,93 +84,103 @@
     <div id="responseMessage" class="mt-3"></div>
 
     <script>
-        function isNotOnlyNumbers(input) {
-            return !/^\d+$/.test(input.trim());
+                function isNotOnlyNumbers(input) {
+                    return !/^\d+$/.test(input.trim());
+                }
+          function isNotOnlyNumbers(value) {
+            return /\D/.test(value); // Returns true if there's at least one non-digit character
         }
-  function isNotOnlyNumbers(value) {
-    return /\D/.test(value); // Returns true if there's at least one non-digit character
-}
-          document.getElementById("productForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
+                  document.getElementById("productForm").addEventListener("submit", async function (e) {
+                    e.preventDefault();
 
-            // Clear previous error messages
-            document.querySelectorAll(".text-danger").forEach(el => el.innerText = "");
+                    // Clear previous error messages
+                    document.querySelectorAll(".text-danger").forEach(el => el.innerText = "");
 
-            let isValid = true;
+                    let isValid = true;
 
-            const name = document.getElementById("name").value.trim();
-            const description = document.getElementById("description").value.trim();
-            const category = document.getElementById("category").value.trim();
-            const price = document.getElementById("price").value.trim();
-            const stock = document.getElementById("stock").value.trim();
+                    const name = document.getElementById("name").value.trim();
+                    const description = document.getElementById("description").value.trim();
+                    const category = document.getElementById("category").value.trim();
+                    const price = document.getElementById("price").value.trim();
+                    const stock = document.getElementById("stock").value.trim();
 
-            if (!name) {
-                document.getElementById("nameError").innerText = "Product Name is required.";
-                isValid = false;
-            } else if (!isNotOnlyNumbers(name)) {
-                document.getElementById("nameError").innerText = "Product Name should not be only numbers.";
-                isValid = false;
-            }
+                    if (!name) {
+                        document.getElementById("nameError").innerText = "Product Name is required.";
+                        isValid = false;
+                    } else if (!isNotOnlyNumbers(name)) {
+                        document.getElementById("nameError").innerText = "Product Name should not be only numbers.";
+                        isValid = false;
+                    }
 
-            if (!description) {
-                document.getElementById("descriptionError").innerText = "Description is required.";
-                isValid = false;
-            } else if (!isNotOnlyNumbers(description)) {
-                document.getElementById("descriptionError").innerText = "Description should not be only numbers.";
-                isValid = false;
-            }
+                    if (!description) {
+                        document.getElementById("descriptionError").innerText = "Description is required.";
+                        isValid = false;
+                    } else if (!isNotOnlyNumbers(description)) {
+                        document.getElementById("descriptionError").innerText = "Description should not be only numbers.";
+                        isValid = false;
+                    }
 
-            if (!category) {
-                document.getElementById("categoryError").innerText = "Category is required.";
-                isValid = false;
-            } else if (!isNotOnlyNumbers(category)) {
-                document.getElementById("categoryError").innerText = "Category should not be only numbers.";
-                isValid = false;
-            }
+                    if (!category) {
+                        document.getElementById("categoryError").innerText = "Category is required.";
+                        isValid = false;
+                    } else if (!isNotOnlyNumbers(category)) {
+                        document.getElementById("categoryError").innerText = "Category should not be only numbers.";
+                        isValid = false;
+                    }
 
-            // Price validation
-            if (!price) {
-                document.getElementById("priceError").innerText = "Price is required.";
-                isValid = false;
-            } else if (isNaN(price) || Number(price) <= 0) {
-                document.getElementById("priceError").innerText = "Price must be a positive number.";
-                isValid = false;
-            }
+                    // Price validation
 
-            // Stock validation
-            if (!stock) {
-                document.getElementById("stockError").innerText = "Stock is required.";
-                isValid = false;
-            } else if (isNaN(stock) || Number(stock) < 0) {
-                document.getElementById("stockError").innerText = "Stock must be zero or a positive number.";
-                isValid = false;
-            }
+                    if (!price) {
+                        document.getElementById("priceError").innerText = "Price is required.";
+                        isValid = false;
+                    } else if (isNaN(price) || Number(price) <= 0) {
+                        document.getElementById("priceError").innerText = "Price must be a positive number.";
+                        isValid = false;
+                    }
 
-            if (!isValid) return;
+                    // Stock validation
+                    if (!stock) {
+                        document.getElementById("stockError").innerText = "Stock is required.";
+                        isValid = false;
+                    } else if (isNaN(stock) || Number(stock) < 0) {
+                        document.getElementById("stockError").innerText = "Stock must be zero or a positive number.";
+                        isValid = false;
+                    }
 
-            const formData = new FormData(this);
+                    if (!isValid) return;
 
-            try {
-                const response = await fetch("/api/pro", {
-                    method: "POST",
-                    body: formData
-                });
+                    const formData = new FormData(this);
 
-                const result = await response.text();
+                           try {
+            const response = await fetch("/api/add_product", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.text();
+            if (response.ok) {
                 document.getElementById("responseMessage").innerHTML =
                     `<div class="alert alert-success">${result}</div>`;
-            } catch (error) {
+            } else {
                 document.getElementById("responseMessage").innerHTML =
-                    `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                    `<div class="alert alert-danger">${result}</div>`;
             }
-        });
+        } catch (error) {
+            document.getElementById("responseMessage").innerHTML =
+                `<div class="alert alert-danger">Error: ${error.message}</div>`;
+        }
+                });
 
     </script>
 
-   
+
 
 
 
 
 </body>
 </html>
+
+     
+   
+     

@@ -1,4 +1,4 @@
-﻿@{
+@{
     var isSuccess = ViewBag.IsSuccess as bool? ?? false;
     var message = ViewBag.Message as string;
 }
@@ -15,7 +15,7 @@
         <div class="alert @(isSuccess ? "alert-success" : "alert-danger")">
             @message
         </div>
-       
+      
     </div>
 </body>
 </html>

@@ -1,0 +1,37 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\kabilKumarm\\Desktop\\harish\\Inventory_web\\Inventory_web\\Inventory_web\\wwwroot\\css\\Inventoryweb.css",
+      "PackagePath": "staticwebassets\\css\\Inventoryweb.css"
+    },
+    {
+      "Id": "C:\\Users\\kabilKumarm\\Desktop\\harish\\Inventory_web\\Inventory_web\\Inventory_web\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "C:\\Users\\kabilKumarm\\Desktop\\harish\\Inventory_web\\Inventory_web\\Inventory_web\\wwwroot\\js\\site.js",
+      "PackagePath": "staticwebassets\\js\\site.js"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Inventoryweb.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Inventoryweb.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.Inventoryweb.props",
+      "PackagePath": "build\\Inventoryweb.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.Inventoryweb.props",
+      "PackagePath": "buildMultiTargeting\\Inventoryweb.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.Inventoryweb.props",
+      "PackagePath": "buildTransitive\\Inventoryweb.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

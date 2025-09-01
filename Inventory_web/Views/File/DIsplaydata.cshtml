@@ -1,0 +1,85 @@
+@using System.Linq
+@model List<Inventoryweb.Models.Products>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<html>
+<head>
+    <title>Edit Product</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+</head>
+<body>
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">@ViewData["Title"]</h2>
+       
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle shadow-sm rounded">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Stock</th>
+                        <th scope="col">Created Date</th>
+                        <th scope="col">Status</th>
+                            <th scope="col">image</th>
+                       
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        <tr class="text-center">
+                            <td>@product.Id</td>
+                            <td class="text-start">@product.Name</td>
+                            <td class="text-start">@product.Description</td>
+                            <td>@product.Category</td>
+                            <td>₹@product.Price.ToString("N2")</td>
+                            <td>@product.Stock</td>
+                            <td>@product.CreatedDate?.ToString("dd MMM yyyy")</td>
+                            <td>
+                                @if (product.IsDiscontinued)
+                                {
+                                    <span class="badge bg-danger">Discontinued</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+
+                                </td>
+                                <td>
+                                @if (!string.IsNullOrEmpty(product.ImagePath))
+                                {
+                                    <img src="@product.ImagePath" alt="Product Image" class="img-thumbnail" style="max-height: 100px;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No image</span>
+                                }
+                                </td>
+                           
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">No products found matching the filter.</div>
+    }
+
+</div>
+</body>
+</html>

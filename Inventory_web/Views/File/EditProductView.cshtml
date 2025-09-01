@@ -1,0 +1,144 @@
+@model Inventoryweb.Models.Products
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<html>
+<head>
+    <title>Edit Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card shadow-lg rounded-4 border-0">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4 text-primary">✏️ Edit Product</h2>
+
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-success text-center">@ViewBag.Message</div>
+                }
+                <a class="btn btn-primary" asp-controller="File" asp-action="Productpage">Back to page</a>
+                <form asp-action="EditProductView" asp-controller="File" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-4">
+                        <label asp-for="Name" class="form-label fw-semibold">Product Name</label>
+                        <input asp-for="Name" class="form-control rounded-3 shadow-sm" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label fw-semibold">Description</label>
+                        <textarea asp-for="Description" class="form-control rounded-3 shadow-sm" rows="3"></textarea>
+                         <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Category" class="form-label fw-semibold">Category</label>
+                        <input asp-for="Category" class="form-control rounded-3 shadow-sm" />
+                         <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Price" class="form-label fw-semibold">Price (₹)</label>
+                        <input asp-for="Price" class="form-control rounded-3 shadow-sm" type="number" />
+                        <span asp-validation-for="Price" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Stock" class="form-label fw-semibold">Stock</label>
+                        <input asp-for="Stock" class="form-control rounded-3 shadow-sm" type="number"  />
+                        <span asp-validation-for="Stock" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="CreatedDate" class="form-label fw-semibold">Created Date</label>
+                        <input asp-for="CreatedDate" class="form-control rounded-3 shadow-sm" type="datetime-local" />
+                        <span asp-validation-for="CreatedDate" class="text-danger small"></span>
+                    </div>
+
+             <input type="hidden" asp-for="ImagePath" />
+
+@if (!string.IsNullOrEmpty(Model.ImagePath))
+{
+    <img src="@Model.ImagePath" class="img-thumbnail mb-2 rounded-3 shadow-sm" width="150" />
+}
+
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill">💾 Update Product</button>
+                    </div>
+                    <div id="successMessage"></div> 
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+           form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Gather form data
+            const formData = new FormData(form);
+
+            const name = formData.get('Name');
+            const category = formData.get('Category');
+            const price = formData.get('Price');
+            const stock = formData.get('Stock');
+
+            const isNumberOnly = str => /^\d+$/.test(str);
+
+            if (!name || !category) {
+                alert('Name and Category are required.');
+                return;
+            }
+            if (isNumberOnly(name)) {
+                alert('Name should not be only numbers.');
+                return;
+            }
+            if (isNumberOnly(category)) {
+                alert('Category should not be only numbers.');
+                return;
+            }
+            if (!price || isNaN(price) || Number(price) < 0) {
+                alert('Price is required and must be a non-negative number.');
+                return;
+            }
+            if (!stock || isNaN(stock) || Number(stock) < 0) {
+                alert('Stock is required and must be a non-negative number.');
+                return;
+            }
+
+            // Send POST request with FormData (do NOT set Content-Type)
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+            function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function(){
+        document.getElementById('previewImage').src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+                if (response.ok) {
+            // Show a success message in the placeholder
+            document.getElementById('successMessage').innerHTML =
+                '<div class="alert alert-success text-center">Product is updated successfully!</div>';
+            // Optionally, reset the form or update fields as needed
+        } else {
+            alert('Failed to update product.');
+        }
+        @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+        });
+
+      
+        </script>
+</body>
+</html>
+
+

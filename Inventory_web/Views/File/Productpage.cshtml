@@ -1,0 +1,244 @@
+@model IEnumerable<Inventoryweb.Models.Products>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    var categoryList = Model.Select(p => p.Category).Distinct().ToList();
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center"><b>Products Lists</b></h2>
+
+        <a asp-controller="File" asp-action="Addproduct" class="btn btn-success">Add Product</a>
+        <a asp-controller="File" asp-action="Lowstock" class="btn btn-warning">Low stocks Items</a><br><br>
+
+      
+        <!-- Filter Form -->
+        <form method="get" asp-action="Displaydata" asp-controller="File" class="mt-4 row g-3">
+            <div class="col-md-4">
+                <input type="text" name="name" class="form-control" placeholder="Search by Name" />
+            </div>
+            <div class="col-md-2">
+                <input type="number" step="0.01" name="price" class="form-control" placeholder="Price (optional)" />
+            </div>
+            <div class="col-md-3">
+                <select name="category" class="form-select">
+                    <option value="">-- All Categories --</option>
+                    @foreach (var category in categoryList)
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+
+        <br><br>
+
+        @if (Model != null && Model.Any())
+        {
+           <table class="table table-hover table-striped align-middle shadow-sm rounded" style="width: 1500px;">
+                <thead class="text-center bg-success text-white">
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>CreatedDate</th>
+                        <th>IsDiscontinued</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>@product.Id</td>
+                            <td>@product.Name</td>
+                            <td>@product.Description</td>
+                            <td>@product.Category</td>
+                            <td>@product.Price</td>
+                            <td>
+                                @product.Stock
+                                @if (product.Stock < 5)
+                                {
+                                    <span class="badge bg-danger ms-3">Low Stock</span>
+                                }
+                            </td>
+                            <td>@product.CreatedDate</td>
+                            <td>
+                                @product.IsDiscontinued
+                                @if (product.IsDiscontinued)
+                                {
+                                    <span class="badge bg-warning text-dark">REMOVED</span>
+                                }
+                            </td>
+                            <td>
+                              
+                                @if (!string.IsNullOrEmpty(product.ImagePath))
+                                {
+                                    <img src="@product.ImagePath" alt="Product Image" class="img-thumbnail" style="max-height: 100px;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No image</span>
+                                }
+                            </td>
+                            
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="redirectToEdit(@product.Id)">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="setDeleteId(@product.Id)">Delete</button>
+                                <button class="btn btn-success btn-sm"
+                                    onclick="viewProduct(
+                                        '@product.Id',
+                                        '@product.Name',
+                                        '@product.Description',
+                                        '@product.Category',
+                                        '@product.Price',
+                                        '@product.Stock',
+                                        '@product.CreatedDate',
+                                        '@product.IsDiscontinued',
+                                        '@product.ImagePath')">
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                      
+                       
+                    }
+            
+                </tbody>
+           
+            </table>
+                
+           
+        }
+        else
+        {
+            <p>No data available.</p>
+        }
+    </div>
+    <style>
+        .table-wide {
+            width: 1500px;
+        }
+    </style>
+    <script>
+        function redirectToEdit(id = null) {
+            var editId = id || document.getElementById('EditIdInput').value;
+            if (editId) {
+                window.location.href = '/product/edit/' + editId;
+            }
+        }
+
+        function redirectToDetails() {
+            var id = document.getElementById('productIdInput').value;
+            if (id) {
+                window.location.href = '/product/details/' + id;
+            }
+        }
+
+        function redirectToDelete() {
+            var id = document.getElementById('deleteIdInput').value;
+            if (id) {
+                window.location.href = '/product/delete/' + id;
+            }
+        }
+
+        function setDeleteId(id) {
+            window.location.href = '/product/delete/' + id;
+        }
+
+        function viewProduct(id, name, description, category, price, stock, createdDate, isDiscontinued, imagePath) {
+            document.getElementById('modalProductId').innerText = id;
+            document.getElementById('modalProductName').innerText = name;
+            document.getElementById('modalProductDescription').innerText = description;
+            document.getElementById('modalProductCategory').innerText = category;
+            document.getElementById('modalProductPrice').innerText = price;
+            document.getElementById('modalProductStock').innerText = stock;
+            document.getElementById('modalProductCreatedDate').innerText = createdDate;
+            document.getElementById('modalProductIsDiscontinued').innerText = isDiscontinued === 'True' ? 'Yes' : 'No';
+            document.getElementById('modalProductImagePath').src = imagePath;
+              
+
+            var myModal = new bootstrap.Modal(document.getElementById('productDetailsModal'));
+            myModal.show();
+        }
+                    document.querySelector('form').addEventListener('submit', function(e) {
+            var nameInput = this.querySelector('input[name="name"]');
+            if (nameInput) {
+                nameInput.value = nameInput.value.trim();
+                // Prevent submit if only blank spaces
+                if (nameInput.value === "") {
+                    nameInput.value = ""; // Optionally clear the field
+                }
+            }
+        });
+
+    </script>
+
+    <!-- Product Details Modal -->
+    <div class="modal fade" id="productDetailsModal" tabindex="-1" aria-labelledby="productDetailsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="productDetailsLabel">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Id</dt>
+                        <dd class="col-sm-9" id="modalProductId"></dd>
+
+                        <dt class="col-sm-3">Name</dt>
+                        <dd class="col-sm-9" id="modalProductName"></dd>
+
+                        <dt class="col-sm-3">Description</dt>
+                        <dd class="col-sm-9" id="modalProductDescription"></dd>
+
+                        <dt class="col-sm-3">Category</dt>
+                        <dd class="col-sm-9" id="modalProductCategory"></dd>
+
+                        <dt class="col-sm-3">Price</dt>
+                        <dd class="col-sm-9" id="modalProductPrice"></dd>
+
+                        <dt class="col-sm-3">Stock</dt>
+                        <dd class="col-sm-9" id="modalProductStock"></dd>
+
+                        <dt class="col-sm-3">Created Date</dt>
+                        <dd class="col-sm-9" id="modalProductCreatedDate"></dd>
+
+                        <dt class="col-sm-3">Is Discontinued</dt>
+                        <dd class="col-sm-9" id="modalProductIsDiscontinued"></dd>
+                        <dt class="col-sm-3">Image</dt>
+                        <dd class="col-sm-9">
+                            <img id="modalProductImagePath" src="" class="modal-product-image" />
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .modal-product-image {
+            max-width: 100%;
+            max-height: 300px;
+            display: block;
+            margin: 0 auto;
+            object-fit: contain;
+        }
+    </style>
+</body>
+</html>

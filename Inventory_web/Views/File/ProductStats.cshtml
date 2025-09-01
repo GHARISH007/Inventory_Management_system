@@ -1,0 +1,91 @@
+﻿@model Inventoryweb.Models.ProductStatisticsViewModel
+
+
+@{
+    ViewData["Title"] = "Product Statistics";
+}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    .dashboard-card {
+        border-radius: 16px;
+        padding: 18px 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+        color: #fff;
+        height: 150px;
+    }
+
+        .dashboard-card:hover {
+            transform: scale(1.03);
+        }
+
+    .card-title-sm {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        opacity: 0.8;
+    }
+
+    .card-value {
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 8px;
+    }
+
+    .card-icon {
+        font-size: 28px;
+        opacity: 0.3;
+        position: absolute;
+        top: 10px;
+        right: 15px;
+    }
+
+    .bg-product {
+        background: linear-gradient(135deg, #4e73df, #224abe);
+    }
+
+    .bg-lowstock {
+        background: linear-gradient(135deg, #e74a3b, #c0392b);
+    }
+
+    .bg-category {
+        background: linear-gradient(135deg, #f6c23e, #dda20a);
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="row g-4">
+        <!-- Total Products -->
+        <div class="col-md-4">
+            <div class="dashboard-card position-relative bg-product">
+                <div class="card-icon"><i class="fas fa-cubes"></i></div>
+                <div class="card-title-sm"><h1><b>Total Products</b></h1></div>
+                <div class="card-value"><h4><b>@Model.TotalProducts</b></h4></div>
+                <div class="large"><h2><b>📈 7.34% more than last month</b></h2></div>
+            </div>
+        </div>
+        <br>
+        <!-- Low Stock Items -->
+        <div class="col-md-4">
+            <div class="dashboard-card position-relative bg-lowstock">
+                <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="card-title-sm"><h1><b>Low Stock</b></h1></div>
+                <div class="card-value"><h4><b>@Model.LowStockCount</b></h4></div>
+                <div class="large"><h2><b>⚠️ Check urgently</b></h2></div>
+            </div>
+        </div>
+        <br>
+        <!-- Top Category -->
+        <div class="col-md-4">
+            <div class="dashboard-card position-relative bg-category">
+                <div class="card-icon"><i class="fas fa-star"></i></div>
+                <div class="card-title-sm"><h1><b>Top Category</b></h1></div>
+                <div class="card-value"><h4><b>@Model.TopCategory</b></h4></div>
+                <div class="large"><h2><b>⭐ Most sold</b></h2></div>
+            </div>
+        </div>
+    </div>
+</div>
